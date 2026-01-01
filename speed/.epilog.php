@@ -14,7 +14,7 @@ $LogEntry = date('Y-m-d H:i:s')." ".$ExecutionTime."\n";
 file_put_contents($LogFile, $LogEntry, FILE_APPEND);
 
 // удалим старые записи, чтобы лог не разрастался
-$MaxLogSize = 5 * 1024 * 1024; // 5 МБ
+$MaxLogSize = 4 * 1024 * 1024; // 4 МБ
 if (file_exists($LogFile) && filesize($LogFile) > $MaxLogSize) {
     // скопируем фай в db.log.old.txt
     copy($LogFile, $LogFile.'.old');

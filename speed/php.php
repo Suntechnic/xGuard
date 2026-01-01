@@ -18,10 +18,29 @@ for ($I = 0; $I < $Iterations; $I++) {
 
     if (count($ar) >= 2000) {
         sort($ar);
+        $ars = $ar;
         rsort($ar);
+
+        $ar[] = array_sum($ar);
+        $ar[] = count($ar);
+        $ar[] = $Iterations/count($ar);
+        $ar[] = $Iterations;
+        
+        $ars[] = $Sum;
+
+        $ar = array_merge($ar, $ars);
+
+        sort($ar);
+        rsort($ar);
+
         $ar = [];
     } else {
         $Sum = ceil($Sum/2) + count($ar);
+        if ($Sum % 4 == 0) {
+            $Sum = $Sum - floor($I/2);
+        } else {
+            $Sum = $Sum + 2;
+        }
     }
 
     
