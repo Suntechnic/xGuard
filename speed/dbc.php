@@ -1,33 +1,14 @@
 <?php
 
-$LoginDB = 'useriprofishop';
-$PasswordDB = '@N}dwiV+4}@+OC1';
-$HostDB = 'localhost';
-$NameDB = 'dbiprofishop';
+$UID = 'dbc';
 
-$lstSQL = [
-"SELECT
-   `iblock_section`.`IBLOCK_SECTION_ID` AS `IBLOCK_SECTION_ID`,
-   `iblock_section`.`ID` AS `UALIAS_0`
-FROM
-   `b_iblock_section` `iblock_section`
-WHERE
-   `iblock_section`.`ID` = 48939",
-"SELECT
-   `iblock_section`.`IBLOCK_SECTION_ID` AS `IBLOCK_SECTION_ID`,
-   `iblock_section`.`ID` AS `UALIAS_0`
-FROM
-   `b_iblock_section` `iblock_section`
-WHERE
-   `iblock_section`.`ID` = 3698",
-   "SELECT
-   `iblock_iblock`.`ID` AS `ID`,
-   `iblock_iblock`.`API_CODE` AS `API_CODE`
-FROM
-   `b_iblock` `iblock_iblock`
-WHERE
-   `iblock_iblock`.`ID` = 5"
-];
+$ini = parse_ini_file(__DIR__ . '/db.ini', true);
+
+$LoginDB = $ini['connection']['login'];
+$PasswordDB = $ini['connection']['password'];
+$HostDB = $ini['connection']['host'];
+$NameDB = $ini['connection']['name'];
+
 
 // тестирует скорость операций с файлами
 $StartTime = microtime(true);
@@ -44,19 +25,17 @@ while ($I<2000) {
         exit();
     }
 
-    foreach ($lstSQL as $SQL) {
-
-        if ($result = $mysqli->query($SQL)) {
-            
-            while ($row = $result->fetch_assoc()) {
-                $row2 = $row;
-            }
-            $result->free();
-        } else {
-            echo "Ошибка выполнения запроса: (" . $mysqli->errno . ") " . $mysqli->error;
+    if ($result = $mysqli->query('SHOW TABLES;')) {
+        
+        while ($row = $result->fetch_assoc()) {
+            $row2 = $row;
         }
-
+        $result->free();
+    } else {
+        echo "Ошибка выполнения запроса: (" . $mysqli->errno . ") " . $mysqli->error;
     }
+
+    
 
     // закрываем соединение
     $mysqli->close(); 
@@ -66,9 +45,9 @@ while ($I<2000) {
 
 
 $ExecutionTime = microtime(true) - $StartTime;
-
+echo $ExecutionTime;
 //echo "Время выполнения: ".$ExecutionTime." секунд \n";
 // запишим время в лог
-$LogFile = __DIR__.'/logs/dbc.log.txt';
+$LogFile = __DIR__.'/logs/'.$UID.'.log.txt';
 $LogEntry = date('Y-m-d H:i:s')." ".$ExecutionTime."\n";
 file_put_contents($LogFile, $LogEntry, FILE_APPEND);

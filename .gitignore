@@ -2,3 +2,4 @@
 *.txt
 
 /speed/tmp/*
+/speed/db.ini
