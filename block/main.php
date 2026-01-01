@@ -1,0 +1,93 @@
+<?php
+/* пример вызова из места нарушениея
+$dctBlock = [
+    'IP' => $_SERVER['REMOTE_ADDR'],
+    'USER_AGENT' => $_SERVER['HTTP_USER_AGENT'],
+    'URI' => $_SERVER['REQUEST_URI']
+];
+include($_SERVER["DOCUMENT_ROOT"]."/x-guard/block/main.php");
+*/
+
+// загрузим конфигурацию из ini файла
+$ini = parse_ini_file(__DIR__ . '/config.ini', true);
+
+$MinuteLimited = (int)$ini['settings']['MinuteLimited']?:5;
+$TenSecondLimited = (int)$ini['settings']['TenSecondLimited']?:3;
+$TTL = (int)$ini['settings']['TTL']?:3600;
+if (isset($ini['settings']['UserAgentsExclude'])) {
+    $lstUserAgentsExclude = explode(',', $ini['settings']['UserAgentsExclude']);
+    foreach ($lstUserAgentsExclude as $key => $value) {
+        $lstUserAgentsExclude[$key] = trim($value);
+    }
+} else {
+    $lstUserAgentsExclude = [];
+}
+
+
+
+if (!isset($dctBlock['IP']) || !isset($_SERVER['DOCUMENT_ROOT'])) return;
+
+$IP = $dctBlock['IP'];
+
+if (isset($dctBlock['USER_AGENT']) && !empty($dctBlock['USER_AGENT'])) {
+    $UserAgent = $dctBlock['USER_AGENT'];
+    if (is_array($lstUserAgentsExclude) && count($lstUserAgentsExclude) > 0) {
+        foreach ($lstUserAgentsExclude as $Agent) {
+            if (stripos($UserAgent, $Agent) !== false) return;
+        }
+    }
+}
+
+
+$debris = explode('.', $IP);
+$First = $debris[0];
+
+// 
+$FilePath = __DIR__.'/logs/'.$IP.'.txt';
+$HtaccessPath = $_SERVER['DOCUMENT_ROOT'].'/.htaccess';
+
+// если файла есть
+if (file_exists($FilePath)) {
+
+    // прочитаем из него данные и узнаем сколько раз данный IP нарушал правила всего и за последнюю минуту
+    $data = file($FilePath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+    $TotalViolations = count($data);
+
+
+    $RecentMinuteViolations = 0;
+    $RecentTenSecondViolations = 0;
+    $OneMinuteAgo = time() - 60;
+    $TenSecondLimited = time() - 10;
+    foreach ($data as $Timestamp) {
+        if ((int)$Timestamp >= $OneMinuteAgo) {
+            if ((int)$Timestamp >= $TenSecondLimited) {
+                $RecentTenSecondViolations++;
+                if ($RecentTenSecondViolations > $TenSecondLimited) break;
+            }
+            $RecentMinuteViolations++;
+            if ($RecentMinuteViolations > $MinuteLimited) break;
+        }
+    }
+    // если нарушений за последнюю минуту больше 5, то блокируем
+    if ($RecentMinuteViolations >= $MinuteLimited
+            || $RecentTenSecondViolations >= $TenSecondLimited
+        ) {
+        // блокируем доступ
+        $BlockRule = "Deny from " . $IP . "\n";
+        file_put_contents($HtaccessPath, $BlockRule, FILE_APPEND);
+        die('Давай, до свидания!');
+    }
+}
+
+
+// удаляем созданные более часа назад файлы логов
+$lstLogFiles = glob(__DIR__.'/logs/*.txt');
+$TimeBarier = time() - $TTL;
+foreach ($lstLogFiles as $LogFile) {
+    if (filemtime($LogFile) < $TimeBarier) {
+        unlink($LogFile);
+    }
+}
+
+// просто добавим время нарушения в файлы
+file_put_contents($FilePath, time().PHP_EOL, FILE_APPEND);
