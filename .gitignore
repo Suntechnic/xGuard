@@ -1,5 +1,7 @@
 *.log
 *.txt
+*.ini
+*.sql
+*.old
 
 /speed/tmp/*
-/speed/db.ini

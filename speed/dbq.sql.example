@@ -1,12 +1,4 @@
-<?php
-
-$LoginDB = 'useriprofishop';
-$PasswordDB = '@N}dwiV+4}@+OC1';
-$HostDB = 'localhost';
-$NameDB = 'dbiprofishop';
-
-$lstSQL = [
-    "SELECT DISTINCT
+SELECT DISTINCT
    BS. *,
    B.LIST_PAGE_URL,
    B.SECTION_PAGE_URL,
@@ -106,8 +98,9 @@ GROUP BY
    BS.ID,
    B.ID
 ORDER BY
-   BS.TIMESTAMP_X DESC",
-    "SELECT   BE.ID IBLOCK_ELEMENT_ID,
+   BS.TIMESTAMP_X DESC;
+
+SELECT   BE.ID IBLOCK_ELEMENT_ID,
    BEP.IBLOCK_PROPERTY_ID,
    BEP.VALUE,
    BEP.VALUE_NUM
@@ -173,8 +166,9 @@ WHERE
 ORDER BY
    BEP.IBLOCK_ELEMENT_ID,
    BEP.IBLOCK_PROPERTY_ID,
-   BEP.ID",
-    "SELECT
+   BEP.ID;
+
+SELECT
    BE.ID as ID
 FROM
    b_iblock B
@@ -202,8 +196,9 @@ WHERE
    AND (
       BE.WF_STATUS_ID = 1
       AND BE.WF_PARENT_ELEMENT_ID IS NULL
-   )",
-    "SELECT DISTINCT
+   );
+
+SELECT DISTINCT
    BE.DETAIL_PICTURE as DETAIL_PICTURE
 FROM
    b_iblock B
@@ -250,74 +245,28 @@ WHERE
       BE.WF_STATUS_ID = 1
       AND BE.WF_PARENT_ELEMENT_ID IS NULL
    )
-LIMIT 1",
-"SELECT
+LIMIT 1;
+
+SELECT
    `iblock_section`.`IBLOCK_SECTION_ID` AS `IBLOCK_SECTION_ID`,
    `iblock_section`.`ID` AS `UALIAS_0`
 FROM
    `b_iblock_section` `iblock_section`
 WHERE
-   `iblock_section`.`ID` = 48939",
-"SELECT
+   `iblock_section`.`ID` = 48939;
+
+SELECT
    `iblock_section`.`IBLOCK_SECTION_ID` AS `IBLOCK_SECTION_ID`,
    `iblock_section`.`ID` AS `UALIAS_0`
 FROM
    `b_iblock_section` `iblock_section`
 WHERE
-   `iblock_section`.`ID` = 3698",
-   "SELECT
+   `iblock_section`.`ID` = 3698;
+
+SELECT
    `iblock_iblock`.`ID` AS `ID`,
    `iblock_iblock`.`API_CODE` AS `API_CODE`
 FROM
    `b_iblock` `iblock_iblock`
 WHERE
-   `iblock_iblock`.`ID` = 5"
-];
-
-// тестирует скорость операций с файлами
-$StartTime = microtime(true);
-
-// устанавливаем соединение с базой данных
-$mysqli = new mysqli($HostDB, $LoginDB, $PasswordDB, $NameDB);
-if ($mysqli->connect_errno) {
-    echo "Не удалось подключиться к MySQL: (" . $mysqli->connect_errno . ") " . $mysqli->connect_error;
-    exit();
-}
-
-foreach ($lstSQL as $SQL) {
-
-    if ($result = $mysqli->query($SQL)) {
-        
-        while ($row = $result->fetch_assoc()) {
-            $row2 = $row;
-        }
-        $result->free();
-    } else {
-        echo "Ошибка выполнения запроса: (" . $mysqli->errno . ") " . $mysqli->error;
-    }
-
-}
-
-// закрываем соединение
-$mysqli->close(); 
-
-
-
-
-
-$ExecutionTime = microtime(true) - $StartTime;
-
-//echo "Время выполнения: ".$ExecutionTime." секунд \n";
-// запишим время в лог
-$LogFile = __DIR__.'/logs/db.log.txt';
-$LogEntry = date('Y-m-d H:i:s')." ".$ExecutionTime."\n";
-file_put_contents($LogFile, $LogEntry, FILE_APPEND);
-
-// удалим старые записи, чтобы лог не разрастался
-$MaxLogSize = 5 * 1024 * 1024; // 5 МБ
-if (file_exists($LogFile) && filesize($LogFile) > $MaxLogSize) {
-    // скопируем фай в db.log.old.txt
-    copy($LogFile, __DIR__.'/logs/db.log.old.txt');
-    // очистим текущий лог
-    file_put_contents($LogFile, '');
-}
+   `iblock_iblock`.`ID` = 5

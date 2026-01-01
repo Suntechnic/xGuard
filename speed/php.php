@@ -1,10 +1,14 @@
 <?php
-// тестирует скорость выполнения PHP-кода на сервере
-$StartTime = microtime(true);
+include __DIR__ . '/.prolog.php';
+
+$UID = 'php'; // тест установки соединения с базой данных
+
+
 // Пример кода для тестирования скорости
 $Sum = 0;
 $ar = [];
-for ($I = 0; $I < 2000000; $I++) {
+$Iterations = $ini[$UID]['iterations'] ?? 200000;
+for ($I = 0; $I < $Iterations; $I++) {
     if ($I % 2 == 0) {
         $Sum += $I;
     } else {
@@ -23,9 +27,4 @@ for ($I = 0; $I < 2000000; $I++) {
     
 }
 
-$ExecutionTime = microtime(true) - $StartTime;
-
-// запишим время в лог
-$LogFile = __DIR__.'/logs/php.log.txt';
-$LogEntry = date('Y-m-d H:i:s')." ".$ExecutionTime."\n";
-file_put_contents($LogFile, $LogEntry, FILE_APPEND);
+include __DIR__ . '/.epilog.php';

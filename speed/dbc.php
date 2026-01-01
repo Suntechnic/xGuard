@@ -1,8 +1,7 @@
 <?php
+include __DIR__ . '/.prolog.php';
 
-$UID = 'dbc';
-
-$ini = parse_ini_file(__DIR__ . '/db.ini', true);
+$UID = 'dbc'; // тест установки соединения с базой данных
 
 $LoginDB = $ini['connection']['login'];
 $PasswordDB = $ini['connection']['password'];
@@ -10,12 +9,9 @@ $HostDB = $ini['connection']['host'];
 $NameDB = $ini['connection']['name'];
 
 
-// тестирует скорость операций с файлами
-$StartTime = microtime(true);
-
 $I=0;
-
-while ($I<2000) {
+$Iterations = $ini[$UID]['iterations'] ?? 2000;
+while ($I<$Iterations) {
     $I++;
 
     // устанавливаем соединение с базой данных
@@ -44,10 +40,4 @@ while ($I<2000) {
 
 
 
-$ExecutionTime = microtime(true) - $StartTime;
-echo $ExecutionTime;
-//echo "Время выполнения: ".$ExecutionTime." секунд \n";
-// запишим время в лог
-$LogFile = __DIR__.'/logs/'.$UID.'.log.txt';
-$LogEntry = date('Y-m-d H:i:s')." ".$ExecutionTime."\n";
-file_put_contents($LogFile, $LogEntry, FILE_APPEND);
+include __DIR__ . '/.epilog.php';
