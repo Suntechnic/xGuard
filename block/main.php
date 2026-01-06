@@ -44,7 +44,6 @@ $First = $debris[0];
 
 // 
 $FilePath = __DIR__.'/logs/'.$IP.'.txt';
-$HtaccessPath = $_SERVER['DOCUMENT_ROOT'].'/.htaccess';
 
 // если файла есть
 if (file_exists($FilePath)) {
@@ -58,6 +57,7 @@ if (file_exists($FilePath)) {
     $RecentTenSecondViolations = 0;
     $OneMinuteAgo = time() - 60;
     $TenSecondLimited = time() - 10;
+
     foreach ($data as $Timestamp) {
         if ((int)$Timestamp >= $OneMinuteAgo) {
             if ((int)$Timestamp >= $TenSecondLimited) {
@@ -68,14 +68,13 @@ if (file_exists($FilePath)) {
             if ($RecentMinuteViolations > $MinuteLimited) break;
         }
     }
+
+
     // если нарушений за последнюю минуту больше 5, то блокируем
     if ($RecentMinuteViolations >= $MinuteLimited
             || $RecentTenSecondViolations >= $TenSecondLimited
         ) {
-        // блокируем доступ
-        $BlockRule = "Deny from " . $IP . "\n";
-        file_put_contents($HtaccessPath, $BlockRule, FILE_APPEND);
-        die('Давай, до свидания!');
+        include(__DIR__.'/block.php');
     }
 }
 
@@ -91,3 +90,4 @@ foreach ($lstLogFiles as $LogFile) {
 
 // просто добавим время нарушения в файлы
 file_put_contents($FilePath, time().PHP_EOL, FILE_APPEND);
+
