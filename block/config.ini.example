@@ -4,6 +4,10 @@
 # TTL: Time to live files in seconds
 # UserAgentExclude: Comma-separated list of user agents to exclude from blocking
 
+[credentials]
+username = admin
+password = password123
+
 [settings]
 MinuteLimited = 4
 TenSecondLimited = 2
