@@ -7,9 +7,7 @@ $dctBlock = [
 ];
 include($_SERVER["DOCUMENT_ROOT"]."/x-guard/block/main.php");
 */
-
-// загрузим конфигурацию из ini файла
-$ini = parse_ini_file(__DIR__ . '/config.ini', true);
+include_once __DIR__.'/.defined.php';
 
 $MinuteLimited = (int)$ini['settings']['MinuteLimited']?:5;
 $TenSecondLimited = (int)$ini['settings']['TenSecondLimited']?:3;
@@ -42,14 +40,13 @@ if (isset($dctBlock['USER_AGENT']) && !empty($dctBlock['USER_AGENT'])) {
 $debris = explode('.', $IP);
 $First = $debris[0];
 
-// 
-$FilePath = __DIR__.'/logs/'.$IP.'.txt';
+$FilePathIP = $LogFilesIPDir.$IP.'.txt';
 
 // если файла есть
-if (file_exists($FilePath)) {
+if (file_exists($FilePathIP)) {
 
-    // прочитаем из него данные и узнаем сколько раз данный IP нарушал правила всего и за последнюю минуту
-    $data = file($FilePath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+    // прочитаем из него данные и узнаем сколько раз данный IP нарушал за последний минуту и за последние 10 секунд
+    $data = file($FilePathIP, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
     $TotalViolations = count($data);
 
 
@@ -69,6 +66,10 @@ if (file_exists($FilePath)) {
         }
     }
 
+    // логируем нарушение в отдельный общий файл
+    $LogEntry = time()."\t".$IP."\t".$dctBlock['REASON']."\t".$dctBlock['URI']."\t".$dctBlock['USER_AGENT'].PHP_EOL;
+    file_put_contents($LogViolationsFile, $LogEntry, FILE_APPEND);
+
 
     // если нарушений за последнюю минуту больше 5, то блокируем
     if ($RecentMinuteViolations >= $MinuteLimited
@@ -80,7 +81,7 @@ if (file_exists($FilePath)) {
 
 
 // удаляем созданные более часа назад файлы логов
-$lstLogFiles = glob(__DIR__.'/logs/*.txt');
+$lstLogFiles = glob($LogFilesIPDir.'*.txt');
 $TimeBarier = time() - $TTL;
 foreach ($lstLogFiles as $LogFile) {
     if (filemtime($LogFile) < $TimeBarier) {
@@ -89,5 +90,5 @@ foreach ($lstLogFiles as $LogFile) {
 }
 
 // просто добавим время нарушения в файлы
-file_put_contents($FilePath, time().PHP_EOL, FILE_APPEND);
+file_put_contents($FilePathIP, time().PHP_EOL, FILE_APPEND);
 
