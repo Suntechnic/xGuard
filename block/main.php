@@ -36,9 +36,9 @@ if (isset($dctBlock['USER_AGENT']) && !empty($dctBlock['USER_AGENT'])) {
     }
 }
 
-
-$debris = explode('.', $IP);
-$First = $debris[0];
+// логируем нарушение в отдельный общий файл
+$LogEntry = time()."\t".$IP."\t".$dctBlock['REASON']."\t".$dctBlock['URI']."\t".$dctBlock['USER_AGENT'].PHP_EOL;
+file_put_contents($LogViolationsFile, $LogEntry, FILE_APPEND);
 
 $FilePathIP = $LogFilesIPDir.$IP.'.txt';
 
@@ -65,10 +65,6 @@ if (file_exists($FilePathIP)) {
             if ($RecentMinuteViolations > $MinuteLimited) break;
         }
     }
-
-    // логируем нарушение в отдельный общий файл
-    $LogEntry = time()."\t".$IP."\t".$dctBlock['REASON']."\t".$dctBlock['URI']."\t".$dctBlock['USER_AGENT'].PHP_EOL;
-    file_put_contents($LogViolationsFile, $LogEntry, FILE_APPEND);
 
 
     // если нарушений за последнюю минуту больше 5, то блокируем
