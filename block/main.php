@@ -9,28 +9,43 @@ include($_SERVER["DOCUMENT_ROOT"]."/x-guard/block/main.php");
 */
 include_once __DIR__.'/.defined.php';
 
+if (!isset($dctBlock['IP']) || !isset($_SERVER['DOCUMENT_ROOT'])) return;
+$IP = $dctBlock['IP'];
+
+
 $MinuteLimited = (int)$ini['settings']['MinuteLimited']?:5;
 $TenSecondLimited = (int)$ini['settings']['TenSecondLimited']?:3;
 $TTL = (int)$ini['settings']['TTL']?:3600;
-if (isset($ini['settings']['UserAgentsExclude'])) {
-    $lstUserAgentsExclude = explode(',', $ini['settings']['UserAgentsExclude']);
-    foreach ($lstUserAgentsExclude as $key => $value) {
-        $lstUserAgentsExclude[$key] = trim($value);
+
+// Пропуск по UserAgent исключениям //////////////////////////////////////////////////////
+if (isset($ini['settings']['UserAgentExclude'])) {
+    $lstUserAgentExclude = explode(',', $ini['settings']['UserAgentExclude']);
+
+    foreach ($lstUserAgentExclude as $key => $value) {
+        $lstUserAgentExclude[$key] = trim($value);
     }
 } else {
-    $lstUserAgentsExclude = [];
+    $lstUserAgentExclude = [];
 }
+// Пропуск по UserAgent исключениям //////////////////////////////////////////////////////
 
 
 
-if (!isset($dctBlock['IP']) || !isset($_SERVER['DOCUMENT_ROOT'])) return;
+// Пропуск по белым IP адресам //////////////////////////////////////////////////////
+if (file_exists($WhitelistFile)) {
+    $lstWhiteIP = file($WhitelistFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 
-$IP = $dctBlock['IP'];
+    if (in_array($IP, $lstWhiteIP)) {
+        return;
+    }
+}
+// Пропуск по белым IP адресам //////////////////////////////////////////////////////
+
 
 if (isset($dctBlock['USER_AGENT']) && !empty($dctBlock['USER_AGENT'])) {
     $UserAgent = $dctBlock['USER_AGENT'];
-    if (is_array($lstUserAgentsExclude) && count($lstUserAgentsExclude) > 0) {
-        foreach ($lstUserAgentsExclude as $Agent) {
+    if (count($lstUserAgentExclude) > 0) {
+        foreach ($lstUserAgentExclude as $Agent) {
             if (stripos($UserAgent, $Agent) !== false) return;
         }
     }

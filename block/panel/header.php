@@ -66,6 +66,7 @@ include_once __DIR__ . '/prolog.php';
       letter-spacing: -0.02em;
       background: linear-gradient(90deg, #b9d8ff, #4fd1c5 40%, #8a5cff 80%);
       -webkit-background-clip: text; color: transparent;
+      text-decoration: none;
     }
     p.lead { margin: 0 0 28px; max-width: 720px; color: var(--muted); font-size: 18px; line-height: 1.6; }
     .grid {

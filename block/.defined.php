@@ -6,6 +6,7 @@ if (!file_exists($StateDir)) {
     mkdir($StateDir, 0755, true);
 }
 $BlockFile = $StateDir.'blocked.txt';
+$WhitelistFile = $StateDir.'whitelist.txt';
 
 // 
 $LogFilesDir = __DIR__.'/logs/';
