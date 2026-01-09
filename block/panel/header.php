@@ -1,3 +1,7 @@
+<?
+include_once __DIR__ . '/prolog.php';
+?>
+
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -22,6 +26,23 @@
       background: var(--bg); color: var(--text);
       display: flex; justify-content: center; align-items: center; padding: 40px;
     }
+    a { color: inherit; }
+
+    .button,
+    button {
+        display: inline-block;
+        text-decoration: none;
+        margin: 12px 0;
+        padding: 13px 16px;
+        border: none; border-radius: 12px;
+        background: linear-gradient(120deg, var(--accent), var(--accent-2));
+        color: #0b1321; font-weight: 700; font-size: 15px;
+        cursor: pointer; box-shadow: 0 12px 28px rgba(79,209,197,0.25);
+        transition: transform 0.1s ease, box-shadow 0.1s ease;
+    }
+    .button:hover, button:hover { transform: translateY(-1px); box-shadow: 0 16px 32px rgba(79,209,197,0.3); }
+    .button:active, button:active { transform: translateY(0); }
+
     .shell {
       max-width: 1080px; width: 100%;
       backdrop-filter: blur(12px);
@@ -57,8 +78,11 @@
       border: 1px solid var(--stroke);
       background: var(--card);
       box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
+      text-decoration: none;
+      transition: transform 0.1s ease, box-shadow 0.1s ease;
     }
-    .card h3 { margin: 0 0 8px; font-size: 18px; color: #f4f7ff; }
+    .card h3 { margin: 8px 0; font-size: 18px; color: #f4f7ff; }
+    .card strong { color: #ffffff; font-size: 48px; float: left; line-height: 1; margin-right: 12px; }
     .card p { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.5; }
     .pill {
       display: inline-flex; align-items: center; gap: 6px;
@@ -81,26 +105,57 @@
       font-size: 15px;
     }
     .auth input:focus { outline: 1px solid var(--accent); box-shadow: 0 0 0 4px rgba(79,209,197,0.18); }
-    .auth button {
-      padding: 13px 16px;
-      border: none; border-radius: 12px;
-      background: linear-gradient(120deg, var(--accent), var(--accent-2));
-      color: #0b1321; font-weight: 700; font-size: 15px;
-      cursor: pointer; box-shadow: 0 12px 28px rgba(79,209,197,0.25);
-      transition: transform 0.1s ease, box-shadow 0.1s ease;
+    
+
+    .log {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
     }
-    .auth button:hover { transform: translateY(-1px); box-shadow: 0 16px 32px rgba(79,209,197,0.3); }
-    .auth button:active { transform: translateY(0); }
+
+    .log-entry {
+        text-decoration: none;
+        color: #fff;
+        font-family: monospace;
+    }
+
+    .log-entry a {
+        text-decoration: none;
+    }
+    .log-entry a:hover {
+        text-decoration: underline;
+        color: #fff;
+    }
+
+    .log-entry:hover {
+        background: rgba(255, 255, 255, 0.1);
+    }
+
+    .log-time {
+        color: #666;
+        font-size: 0.9em;
+    }
+
+    .log-ip {
+        color: #4fd1c5;
+        font-weight: bold;
+    }
+    .log-reason {
+        color: #ff6b6b;
+    }
+    .log-url {
+        color: #cfbcff;
+    }
+    .log-agent {
+        color: #9fb5d4;
+    }
   </style>
 </head>
 <body>
   <main class="shell">
     <div class="eyebrow"><span class="spark"></span> Active defense layer</div>
-    <h1>xGuard</h1>
-    <p class="lead">
-      Сервис активной защиты: мониторинг, фильтрация трафика, мгновенные оповещения и аналитика
-      инцидентов. Прозрачное подключение без простоя.
-    </p>
+    <a href="?page=dashboard"><h1>xGuard</h1></a>
+    
 
     
 
