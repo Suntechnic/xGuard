@@ -64,7 +64,8 @@ include_once __DIR__ . '/prolog.php';
     .button:active, button:active { transform: translateY(0); }
 
     .shell {
-      max-width: 1080px; width: 100%;
+      /* max-width: 1080px;  */
+      width: 100%;
       backdrop-filter: blur(12px);
       border: 1px solid var(--stroke);
       border-radius: 20px;

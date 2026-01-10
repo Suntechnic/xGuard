@@ -1,11 +1,16 @@
 <?php
 /* пример вызова из места нарушениея
-$dctBlock = [
-    'IP' => $_SERVER['REMOTE_ADDR'],
-    'USER_AGENT' => $_SERVER['HTTP_USER_AGENT'],
-    'URI' => $_SERVER['REQUEST_URI']
-];
-include($_SERVER["DOCUMENT_ROOT"]."/x-guard/block/main.php");
+$IP = trim($_SERVER['HTTP_DDG_CONNECTING_IP']?$_SERVER['HTTP_DDG_CONNECTING_IP']:$_SERVER['HTTP_X_FORWARDED_FOR']);
+
+if ($IP) {
+    $dctBlock = [
+            'IP' => $IP,
+            'USER_AGENT' => $_SERVER['HTTP_USER_AGENT'],
+            'URI' => $_SERVER['HTTP_REFERER'],
+            'REASON' => '404:'.$_SERVER['REQUEST_URI'],
+        ];
+    include($_SERVER["DOCUMENT_ROOT"]."/xGuard/block/main.php");
+}
 */
 include_once __DIR__.'/.defined.php';
 
@@ -13,9 +18,9 @@ if (!isset($dctBlock['IP']) || !isset($_SERVER['DOCUMENT_ROOT'])) return;
 $IP = $dctBlock['IP'];
 
 
-$MinuteLimited = (int)$ini['settings']['MinuteLimited']?:5;
-$TenSecondLimited = (int)$ini['settings']['TenSecondLimited']?:3;
-$TTL = (int)$ini['settings']['TTL']?:3600;
+// логируем нарушение в отдельный общий файл
+$LogEntry = time()."\t".$IP."\t".$dctBlock['REASON']."\t".$dctBlock['URI']."\t".$dctBlock['USER_AGENT'].PHP_EOL;
+file_put_contents($LogViolationsFile, $LogEntry, FILE_APPEND);
 
 // Пропуск по UserAgent исключениям //////////////////////////////////////////////////////
 if (isset($ini['settings']['UserAgentExclude'])) {
@@ -26,6 +31,14 @@ if (isset($ini['settings']['UserAgentExclude'])) {
     }
 } else {
     $lstUserAgentExclude = [];
+}
+if (isset($dctBlock['USER_AGENT']) && !empty($dctBlock['USER_AGENT'])) {
+    $UserAgent = $dctBlock['USER_AGENT'];
+    if (count($lstUserAgentExclude) > 0) {
+        foreach ($lstUserAgentExclude as $Agent) {
+            if (stripos($UserAgent, $Agent) !== false) return;
+        }
+    }
 }
 // Пропуск по UserAgent исключениям //////////////////////////////////////////////////////
 
@@ -42,18 +55,11 @@ if (file_exists($WhitelistFile)) {
 // Пропуск по белым IP адресам //////////////////////////////////////////////////////
 
 
-if (isset($dctBlock['USER_AGENT']) && !empty($dctBlock['USER_AGENT'])) {
-    $UserAgent = $dctBlock['USER_AGENT'];
-    if (count($lstUserAgentExclude) > 0) {
-        foreach ($lstUserAgentExclude as $Agent) {
-            if (stripos($UserAgent, $Agent) !== false) return;
-        }
-    }
-}
 
-// логируем нарушение в отдельный общий файл
-$LogEntry = time()."\t".$IP."\t".$dctBlock['REASON']."\t".$dctBlock['URI']."\t".$dctBlock['USER_AGENT'].PHP_EOL;
-file_put_contents($LogViolationsFile, $LogEntry, FILE_APPEND);
+$MinuteLimited = (int)$ini['settings']['MinuteLimited']?:5;
+$TenSecondLimited = (int)$ini['settings']['TenSecondLimited']?:3;
+$TTL = (int)$ini['settings']['TTL']?:3600;
+
 
 $FilePathIP = $LogFilesIPDir.$IP.'.txt';
 
