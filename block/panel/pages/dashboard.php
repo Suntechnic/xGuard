@@ -3,6 +3,8 @@
 $lstBlockedIPs = file($BlockFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 // нарушения
 $lstViolations = file($LogViolationsFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+// белый список
+$lstWhiteIP = file($WhitelistFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 ?>
 <p class="lead">
     Сервис активной защиты: мониторинг, фильтрация трафика, мгновенные оповещения и аналитика
@@ -23,9 +25,12 @@ $lstViolations = file($LogViolationsFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPT
         <strong><?php echo count($lstViolations); ?></strong>
         <p>количество зафиксированных нарушений</p>
     </a>
-    <div class="card">
-        <div class="pill" style="background:rgba(79,209,197,0.14);color:#caf7ef;">Rumer</div>
-        <h3>Киргуду</h3>
-        <p>тут пока не понятно что за инфа)))</p>
-    </div>
+    <a class="card" href="?page=whitelist">
+        <div class="pill" style="background:rgba(92,255,138,0.18);color:#b3ffca;">
+            WhiteList
+        </div>
+        <h3>Белый список</h3>
+        <strong><?php echo count($lstWhiteIP); ?></strong>
+        <p>IP который не блокируются никогда</p>
+    </a>
 </div>

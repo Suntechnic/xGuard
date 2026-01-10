@@ -86,7 +86,10 @@ if (file_exists($FilePathIP)) {
     if ($RecentMinuteViolations >= $MinuteLimited
             || $RecentTenSecondViolations >= $TenSecondLimited
         ) {
+        $BlockIP = $IP;
+        $BlockIPReason = 'Превышение лимитов нарушений (последнее: '.$dctBlock['REASON'].')';
         include(__DIR__.'/block.php');
+        die('Давай, до свидания!');
     }
 }
 

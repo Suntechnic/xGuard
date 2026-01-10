@@ -40,6 +40,26 @@ include_once __DIR__ . '/prolog.php';
         cursor: pointer; box-shadow: 0 12px 28px rgba(79,209,197,0.25);
         transition: transform 0.1s ease, box-shadow 0.1s ease;
     }
+    .button.unblock,
+    button.unblock {
+        background: linear-gradient(120deg, #d4ffb6, #6bffb3);
+        box-shadow: 0 12px 28px rgba(255,107,107,0.25);
+    }
+    .button.unblockperm,
+    button.unblockperm {
+        background: linear-gradient(120deg, #ebfff3, #6bffb3);
+        box-shadow: 0 12px 28px rgba(255,107,107,0.25);
+    }
+    .button.block,
+    button.block {
+        background: linear-gradient(120deg, #ffbbbb, #ff8787);
+        box-shadow: 0 12px 28px rgba(255,107,107,0.25);
+    }
+    .block { color: #de2b2b; }
+    .unblock { color: #268e00; }
+    .unblockperm { color: #46ae20; }
+
+
     .button:hover, button:hover { transform: translateY(-1px); box-shadow: 0 16px 32px rgba(79,209,197,0.3); }
     .button:active, button:active { transform: translateY(0); }
 
@@ -141,14 +161,23 @@ include_once __DIR__ . '/prolog.php';
         color: #4fd1c5;
         font-weight: bold;
     }
+        .blocked {
+            color: #ff6b6b;
+        }
+        .whitelisted {
+            color: #eafcf0;
+        }
     .log-reason {
         color: #ff6b6b;
+        overflow-wrap: anywhere;
     }
     .log-url {
         color: #cfbcff;
+        overflow-wrap: anywhere;
     }
     .log-agent {
         color: #9fb5d4;
+        overflow-wrap: anywhere;
     }
   </style>
 </head>
