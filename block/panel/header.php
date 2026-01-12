@@ -63,6 +63,42 @@ include_once __DIR__ . '/prolog.php';
     .button:hover, button:hover { transform: translateY(-1px); box-shadow: 0 16px 32px rgba(79,209,197,0.3); }
     .button:active, button:active { transform: translateY(0); }
 
+    /* Navigation styles */
+    nav {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin: 32px 0 0 0;
+      padding: 20px 0;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    nav a {
+      position: relative;
+      padding: 10px 18px;
+      border-radius: 8px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text);
+      text-decoration: none;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+    }
+    nav a:hover {
+      background: rgba(79,209,197,0.15);
+      border-color: rgba(79,209,197,0.4);
+      color: var(--accent);
+      box-shadow: 0 8px 16px rgba(79,209,197,0.15);
+      transform: translateY(-2px);
+    }
+    nav a:active {
+      transform: translateY(0);
+    }
+
     .shell {
       /* max-width: 1080px;  */
       width: 100%;
@@ -185,7 +221,12 @@ include_once __DIR__ . '/prolog.php';
 <body>
   <main class="shell">
     <div class="eyebrow"><span class="spark"></span> Active defense layer</div>
-    <a href="?page=dashboard"><h1>xGuard</h1></a>
+    <h1>xGuard</h1>
+    <nav>
+        <a href="?page=dashboard">Панель</a>
+        <a href="?page=blocks">Журнал блокировок</a>
+        <a href="?page=settings">Настройки</a>
+    </nav>
     
 
     

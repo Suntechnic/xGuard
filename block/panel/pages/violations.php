@@ -1,7 +1,7 @@
 <?
-$lstBlockedIPs = file($BlockFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-$lstViolations = file($LogViolationsFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-$lstWhiteIP = file($WhitelistFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+$lstBlockedIPs = file($BlockFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES); if(!$lstBlockedIPs)$lstBlockedIPs = [];
+$lstViolations = file($LogViolationsFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES); if(!$lstViolations)$lstViolations = [];
+$lstWhiteIP = file($WhitelistFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES); if(!$lstWhiteIP)$lstWhiteIP = [];
 // лог файла нарушений разделитель в строках \t
 // колоноки: 0 - время нарушения (timestamp)
 //          1 - IP адрес

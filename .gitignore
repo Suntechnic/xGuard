@@ -3,5 +3,3 @@
 *.ini
 *.sql
 *.old
-
-/speed/tmp/*

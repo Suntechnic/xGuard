@@ -12,4 +12,3 @@ password = password123
 MinuteLimited = 4
 TenSecondLimited = 2
 TTL = 3600
-UserAgentExclude = Googlebot,Bingbot,Slurp,DuckDuckBot,YandexBot,YandexImages,Baiduspider,Exabot

@@ -2,8 +2,14 @@
 /* пример вызова из места нарушениея
 $IP = trim($_SERVER['HTTP_DDG_CONNECTING_IP']?$_SERVER['HTTP_DDG_CONNECTING_IP']:$_SERVER['HTTP_X_FORWARDED_FOR']);
 
+// обязательно должны быть эти поля:
+// IP - IP адрес нарушителя
+// USER_AGENT - UserAgent нарушителя
+// URI - с какой страницы пришел нарушитель
+// REASON - причина нарушения, если оно есть
+
 if ($IP) {
-    $dctBlock = [
+    $xGuardEvent = [
             'IP' => $IP,
             'USER_AGENT' => $_SERVER['HTTP_USER_AGENT'],
             'URI' => $_SERVER['HTTP_REFERER'],
@@ -14,34 +20,13 @@ if ($IP) {
 */
 include_once __DIR__.'/.defined.php';
 
-if (!isset($dctBlock['IP']) || !isset($_SERVER['DOCUMENT_ROOT'])) return;
-$IP = $dctBlock['IP'];
+if (!isset($xGuardEvent['IP']) || !isset($_SERVER['DOCUMENT_ROOT'])) return;
+$IP = $xGuardEvent['IP'];
 
 
 // логируем нарушение в отдельный общий файл
-$LogEntry = time()."\t".$IP."\t".$dctBlock['REASON']."\t".$dctBlock['URI']."\t".$dctBlock['USER_AGENT'].PHP_EOL;
+$LogEntry = time()."\t".$IP."\t".$xGuardEvent['REASON']."\t".$xGuardEvent['URI']."\t".$xGuardEvent['USER_AGENT'].PHP_EOL;
 file_put_contents($LogViolationsFile, $LogEntry, FILE_APPEND);
-
-// Пропуск по UserAgent исключениям //////////////////////////////////////////////////////
-if (isset($ini['settings']['UserAgentExclude'])) {
-    $lstUserAgentExclude = explode(',', $ini['settings']['UserAgentExclude']);
-
-    foreach ($lstUserAgentExclude as $key => $value) {
-        $lstUserAgentExclude[$key] = trim($value);
-    }
-} else {
-    $lstUserAgentExclude = [];
-}
-if (isset($dctBlock['USER_AGENT']) && !empty($dctBlock['USER_AGENT'])) {
-    $UserAgent = $dctBlock['USER_AGENT'];
-    if (count($lstUserAgentExclude) > 0) {
-        foreach ($lstUserAgentExclude as $Agent) {
-            if (stripos($UserAgent, $Agent) !== false) return;
-        }
-    }
-}
-// Пропуск по UserAgent исключениям //////////////////////////////////////////////////////
-
 
 
 // Пропуск по белым IP адресам //////////////////////////////////////////////////////
@@ -55,7 +40,64 @@ if (file_exists($WhitelistFile)) {
 // Пропуск по белым IP адресам //////////////////////////////////////////////////////
 
 
+// проверяем существование папки с правилами
+$refBlockRules = [];
+$refExcludeRules = [];
+if (is_dir($RulesDir)) {
+    
+    // папка с правилами мгновенной блокировки
+    $BlockRulesDir = $RulesDir.'/block';
+    if (is_dir($BlockRulesDir)) {
+        // загружаем все правила мгновенной блокировки
+        $lstBlockRulesFile = glob($BlockRulesDir.'/*.txt');
+        foreach ($lstBlockRulesFile as $RuleFile) {
+            $NameRule = basename($RuleFile, '.txt');
+            $refBlockRules[$NameRule] = file($RuleFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+        }
+    }
 
+    // проверяем не нарушил ли кто-то из правил мгновенной блокировки
+    foreach ($refBlockRules as $FieldName => $lstRules) {
+        if (isset($xGuardEvent[$FieldName]) && !empty($xGuardEvent[$FieldName])) {
+            $FieldValue = $xGuardEvent[$FieldName];
+            foreach ($lstRules as $Rule) {
+                if (preg_match('/'.$Rule.'/i', $FieldValue)) {
+                    // нарушение найдено - блокируем
+                    $BlockIP = $IP;
+                    $BlockIPReason = 'Нарушение правила ('.$FieldName.': '.$Rule.')';
+                    include(__DIR__.'/block.php');
+                    die('Давай, до свидания!');
+                }
+            }
+        }
+    }
+
+    // папка с правилами исключениями
+    $ExcludeRulesDir = $RulesDir.'/exclude';
+    if (is_dir($ExcludeRulesDir)) {
+        // загружаем все правила исключений
+        $lstExcludeRulesFile = glob($ExcludeRulesDir.'/*.txt');
+        foreach ($lstExcludeRulesFile as $RuleFile) {
+            $NameRule = basename($RuleFile, '.txt');
+            $refExcludeRules[$NameRule] = file($RuleFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+        }
+    }
+
+    // проверяем не должны ли мы пропустить этого нарушителя по правилам исключений
+    foreach ($refExcludeRules as $FieldName => $lstRules) {
+        if (isset($xGuardEvent[$FieldName]) && !empty($xGuardEvent[$FieldName])) {
+            $FieldValue = $xGuardEvent[$FieldName];
+            foreach ($lstRules as $Rule) {
+                if (preg_match('/'.$Rule.'/i', $FieldValue)) {
+                    return; // пропускаем этого нарушителя
+                }
+            }
+        }
+    }
+}
+
+
+/// Если мы оказались здесь - переходим к подсчету нарушений данного IP за последний период времени
 $MinuteLimited = (int)$ini['settings']['MinuteLimited']?:5;
 $TenSecondLimited = (int)$ini['settings']['TenSecondLimited']?:3;
 $TTL = (int)$ini['settings']['TTL']?:3600;
@@ -93,7 +135,7 @@ if (file_exists($FilePathIP)) {
             || $RecentTenSecondViolations >= $TenSecondLimited
         ) {
         $BlockIP = $IP;
-        $BlockIPReason = 'Превышение лимитов нарушений (последнее: '.$dctBlock['REASON'].')';
+        $BlockIPReason = 'Превышение лимитов нарушений (последнее: '.$xGuardEvent['REASON'].')';
         include(__DIR__.'/block.php');
         die('Давай, до свидания!');
     }

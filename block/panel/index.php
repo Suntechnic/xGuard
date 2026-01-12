@@ -2,7 +2,7 @@
 include_once __DIR__ . '/header.php';
 
 if (defined('XGUARD_AUTHORIZED') && XGUARD_AUTHORIZED) {
-    $lstAllowPages = ['dashboard','blocklist','violations','ip','settings','about'];
+    $lstAllowPages = ['dashboard','blocklist','blocks','violations','ip','settings','about'];
 
     $Page = $_GET['page'] ?? 'dashboard';
 

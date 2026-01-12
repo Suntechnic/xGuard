@@ -26,6 +26,7 @@ if ($_POST['username'] === $ini['credentials']['username'] && $_POST['password']
 if (($_GET['action'] == 'unblock' || $_GET['action'] == 'unblockperm') 
         && filter_var($_GET['ip'], FILTER_VALIDATE_IP)) 
     {
+    
     $lstBlockedIPs = file($BlockFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
     // разблокировка IP
     $IpToUnblock = $_GET['ip'];
@@ -43,7 +44,6 @@ if (($_GET['action'] == 'unblock' || $_GET['action'] == 'unblockperm')
             $lstWhiteIP[] = $IpToUnblock;
             file_put_contents($WhitelistFile, implode("\n", $lstWhiteIP)."\n");
         }
-        
     }
 
     header('Location: ?page='.urlencode($_GET['page'] ?? ''));
