@@ -18,8 +18,12 @@ if (!in_array($BlockIP, $lstBlockedIPs)) {
     // сохраняем обратно в файл
     file_put_contents($BlockFile, implode("\n", $lstBlockedIPs)."\n");
 
-    $LogBlockEntry = time()."\t".$BlockIP."\t".$BlockIPReason.PHP_EOL;
-    file_put_contents($LogBlockFile, $LogBlockEntry, FILE_APPEND);
+    $LogBlockEntry = time()."\t".$BlockIP."\t".$BlockIPReason;
+    file_put_contents($LogBlockFile, $LogBlockEntry.PHP_EOL, FILE_APPEND);
+
+    $IncidentID = md5($LogBlockEntry);
+    $LogIncidentFile = $LogFilesIncidentsDir.$IncidentID.'.log';
+    file_put_contents($LogIncidentFile, print_r($xGuardEvent,true).PHP_EOL);
 }
 // применим блокировку
 include_once __DIR__.'/applyblock.php';

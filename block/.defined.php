@@ -27,10 +27,15 @@ $LogFilesDir = __DIR__.'/logs/';
 if (!file_exists($LogFilesDir)) {
     mkdir($LogFilesDir, 0755, true);
 }
-
+// папка для логов по IP
 $LogFilesIPDir = $LogFilesDir.'ip/';
 if (!file_exists($LogFilesIPDir)) {
     mkdir($LogFilesIPDir, 0755, true);
+}
+// папка для логов инцидентов
+$LogFilesIncidentsDir = $LogFilesDir.'incidents/';
+if (!file_exists($LogFilesIncidentsDir)) {
+    mkdir($LogFilesIncidentsDir, 0755, true);
 }
 
 // файлы логов
