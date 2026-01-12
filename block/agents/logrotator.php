@@ -1,5 +1,5 @@
 <?php
-
+// ротация лог-файлов
 require_once __DIR__.'/../.defined.php';
 
 // Rotate log files

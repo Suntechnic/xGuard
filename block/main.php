@@ -30,13 +30,13 @@ file_put_contents($LogViolationsFile, $LogEntry, FILE_APPEND);
 
 
 // Пропуск по белым IP адресам //////////////////////////////////////////////////////
-if (file_exists($WhitelistFile)) {
-    $lstWhiteIP = file($WhitelistFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+// if (file_exists($WhitelistFile)) {
+//     $lstWhiteIP = file($WhitelistFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 
-    if (in_array($IP, $lstWhiteIP)) {
-        return;
-    }
-}
+//     if (in_array($IP, $lstWhiteIP)) {
+//         return;
+//     }
+// }
 // Пропуск по белым IP адресам //////////////////////////////////////////////////////
 
 
@@ -55,7 +55,7 @@ if (is_dir($RulesDir)) {
             $refBlockRules[$NameRule] = file($RuleFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
         }
     }
-
+    
     // проверяем не нарушил ли кто-то из правил мгновенной блокировки
     foreach ($refBlockRules as $FieldName => $lstRules) {
         if (isset($xGuardEvent[$FieldName]) && !empty($xGuardEvent[$FieldName])) {

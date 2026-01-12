@@ -1,9 +1,11 @@
 <?php
 $ini = parse_ini_file(__DIR__ . '/config.ini', true);
 
-$RulesDir = __DIR__.'/rules/';
+$MainDir = __DIR__;
 
-$StateDir = __DIR__.'/state/';
+$RulesDir = $MainDir.'/rules/';
+
+$StateDir = $MainDir.'/state/';
 if (!file_exists($StateDir)) {
     mkdir($StateDir, 0755, true);
 }
@@ -23,7 +25,7 @@ if (!file_exists($KeyFile)) {
 
 
 // 
-$LogFilesDir = __DIR__.'/logs/';
+$LogFilesDir = $MainDir.'/logs/';
 if (!file_exists($LogFilesDir)) {
     mkdir($LogFilesDir, 0755, true);
 }
