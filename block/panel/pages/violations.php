@@ -1,3 +1,5 @@
+
+<h2>Журнал нарушений</h2>
 <?
 $lstBlockedIPs = file($BlockFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES); if(!$lstBlockedIPs)$lstBlockedIPs = [];
 $lstViolations = file($LogViolationsFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES); if(!$lstViolations)$lstViolations = [];

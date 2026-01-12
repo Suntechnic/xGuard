@@ -9,8 +9,17 @@ if (!file_exists($StateDir)) {
 }
 $BlockFile = $StateDir.'blocked.txt';
 if (!file_exists($BlockFile)) file_put_contents($BlockFile, '');
+
 $WhitelistFile = $StateDir.'whitelist.txt';
 if (!file_exists($WhitelistFile)) file_put_contents($WhitelistFile, '');
+
+$KeyFile = $StateDir.'key.txt';
+if (!file_exists($KeyFile)) {
+    $Key = bin2hex(random_bytes(16));
+    file_put_contents($KeyFile, $Key);
+} else {
+    $Key = trim(file_get_contents($KeyFile));
+}
 
 
 // 

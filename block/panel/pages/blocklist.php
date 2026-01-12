@@ -14,6 +14,7 @@ foreach ($logBlock as $Line) {
 
 
 ?>
+<h2>Заблокированные IP-адреса</h2>
 <div class="log">
     <?foreach ($lstBlockedIPs as $Ip):?>
     <span class="log-entry" href="?page=violations&filter=ip&value=<?=$Ip?>">
