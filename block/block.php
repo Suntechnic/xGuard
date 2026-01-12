@@ -23,7 +23,8 @@ if (!in_array($BlockIP, $lstBlockedIPs)) {
 
     $IncidentID = md5($LogBlockEntry);
     $LogIncidentFile = $LogFilesIncidentsDir.$IncidentID.'.log';
-    file_put_contents($LogIncidentFile, print_r($xGuardEvent,true).PHP_EOL);
+    $LogIncidentEntry = date('Y-m-d H:i:s').PHP_EOL.print_r($xGuardEvent,true).PHP_EOL.print_r($_SERVER,true);
+    file_put_contents($LogIncidentFile, $LogIncidentEntry.PHP_EOL);
 }
 // применим блокировку
 include_once __DIR__.'/applyblock.php';
