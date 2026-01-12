@@ -9,8 +9,8 @@ $LogMaxFileSize = $ini['settings']['LogMaxFileSize']?$ini['settings']['LogMaxFil
 $lstLogFiles = glob($LogFilesDir.'*.log');
 foreach ($lstLogFiles as $LogFile) {
     if (file_exists($LogFile) && (filesize($LogFile) >= $LogMaxFileSize)) {
-        $strNewLogFile = $LogFile.'.'.date('YmdHis');
-        rename($LogFile, $strNewLogFile);
+        $NewLogFile = $LogFile.'.'.date('Ymd_His').'.log';
+        rename($LogFile, $NewLogFile);
         touch($LogFile);
     }
 }
