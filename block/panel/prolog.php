@@ -35,7 +35,7 @@ if (($_GET['action'] == 'unblock' || $_GET['action'] == 'unblockperm')
     });
 
     file_put_contents($BlockFile, implode("\n", $lstBlockedIPs) . "\n");
-    include_once __DIR__.'/applyblock.php';
+    include_once __DIR__.'/../applyblock.php';
 
     if ($_GET['action'] == 'unblockperm') {
         // добавление файла в белый список

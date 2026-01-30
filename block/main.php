@@ -23,12 +23,6 @@ include_once __DIR__.'/.defined.php';
 if (!isset($xGuardEvent['IP']) || !isset($_SERVER['DOCUMENT_ROOT'])) return;
 $IP = $xGuardEvent['IP'];
 
-
-// логируем нарушение в отдельный общий файл
-$LogEntry = time()."\t".$IP."\t".$xGuardEvent['REASON']."\t".$xGuardEvent['URI']."\t".$xGuardEvent['USER_AGENT'].PHP_EOL;
-file_put_contents($LogViolationsFile, $LogEntry, FILE_APPEND);
-
-
 // Пропуск по белым IP адресам //////////////////////////////////////////////////////
 if (file_exists($WhitelistFile)) {
     $lstWhiteIP = file($WhitelistFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
@@ -71,7 +65,7 @@ if (is_dir($RulesDir)) {
             }
         }
     }
-//print_r($refBlockRules);die();
+
     // папка с правилами исключениями
     $ExcludeRulesDir = $RulesDir.'/exclude';
     if (is_dir($ExcludeRulesDir)) {
@@ -96,6 +90,9 @@ if (is_dir($RulesDir)) {
     }
 }
 
+// логируем нарушение в отдельный общий файл
+$LogEntry = time()."\t".$IP."\t".$xGuardEvent['REASON']."\t".$xGuardEvent['URI']."\t".$xGuardEvent['USER_AGENT'].PHP_EOL;
+file_put_contents($LogViolationsFile, $LogEntry, FILE_APPEND);
 
 /// Если мы оказались здесь - переходим к подсчету нарушений данного IP за последний период времени
 $MinuteLimited = (int)$ini['settings']['MinuteLimited']?:5;
